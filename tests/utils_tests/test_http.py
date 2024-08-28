@@ -328,6 +328,14 @@ class HttpDateProcessingTests(unittest.TestCase):
         parsed = parse_http_date('Sun Nov  6 08:49:37 0037')
         self.assertEqual(datetime.utcfromtimestamp(parsed), datetime(2037, 11, 6, 8, 49, 37))
 
+    def test_parsing_year_more_than_50_years_in_future(self):
+        parsed = parse_http_date('Sun Nov  6 08:49:37 0073')
+        self.assertEqual(datetime.utcfromtimestamp(parsed), datetime(1973, 11, 6, 8, 49, 37))
+
+    def test_parsing_year_within_50_years_in_future(self):
+        parsed = parse_http_date('Sun Nov  6 08:49:37 0071')
+        self.assertEqual(datetime.utcfromtimestamp(parsed), datetime(2071, 11, 6, 8, 49, 37))
+
 
 class EscapeLeadingSlashesTests(unittest.TestCase):
     def test(self):
