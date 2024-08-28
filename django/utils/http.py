@@ -176,10 +176,7 @@ def parse_http_date(date):
     try:
         year = int(m.group('year'))
         if year < 100:
-            if year < 70:
-                year += 2000
-            else:
-                year += 1900
+            year = determine_century(year)
         month = MONTHS.index(m.group('mon').lower()) + 1
         day = int(m.group('day'))
         hour = int(m.group('hour'))
@@ -189,6 +186,17 @@ def parse_http_date(date):
         return calendar.timegm(result.utctimetuple())
     except Exception as exc:
         raise ValueError("%r is not a valid date" % date) from exc
+
+
+def determine_century(year):
+    """
+    Determine the correct century for a two-digit year according to RFC 7231.
+    """
+    current_year = datetime.datetime.now().year
+    current_century = current_year // 100 * 100
+    if year + current_century > current_year + 50:
+        return year + current_century - 100
+    return year + current_century
 
 
 def parse_http_date_safe(date):
